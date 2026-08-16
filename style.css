@@ -34,7 +34,7 @@ body {
 .masuk { background-color: #d1fae5; color: #065f46; }
 .keluar { background-color: #fee2e2; color: #991b1b; }
 
-/* Form Input */
+/* Form Input & Buttons */
 .form-group { margin-bottom: 15px; }
 label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
 input, select, button {
@@ -52,8 +52,15 @@ button {
     cursor: pointer;
     font-weight: bold;
     margin-top: 10px;
+    transition: 0.3s;
 }
 button:hover { background-color: #1d4ed8; }
+.btn-success { background-color: #10b981; }
+.btn-success:hover { background-color: #059669; }
+
+/* Tombol Sync Gmail Baru */
+.btn-sync { background-color: #f59e0b; margin-top: 15px; }
+.btn-sync:hover { background-color: #d97706; }
 
 /* List Transaksi */
 .list-transaksi {
@@ -87,4 +94,5 @@ button:hover { background-color: #1d4ed8; }
     cursor: pointer;
     width: auto;
     font-size: 12px;
+    margin-top: 5px;
 }
