@@ -6,7 +6,7 @@ const inputSumber = document.getElementById('sumber');
 const listTransaksi = document.getElementById('list-transaksi');
 
 // NANTI KITA ISI LINK INI SETELAH GOOGLE APPS SCRIPT SELESAI
-const URL_API_GAS = "ISI_LINK_WEB_APP_GAS_DI_SINI_NANTI";
+const URL_API_GAS = "https://script.google.com/macros/s/AKfycbxiKAmbyy46MbzVwSYkDtXPofa8TYOJlKaG8_MRESjxxI2Zb-v1uaLCMKvc4upfC7vArg/exec";
 
 // Tarik data dari LocalStorage, kalau kosong bikin array kosong []
 let transaksi = JSON.parse(localStorage.getItem('dataTransaksi')) || [];
