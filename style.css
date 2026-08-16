@@ -1,0 +1,90 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+.card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+.text-center { text-align: center; }
+
+/* Box Saldo */
+.saldo-box {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+.saldo-item {
+    flex: 1;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+.masuk { background-color: #d1fae5; color: #065f46; }
+.keluar { background-color: #fee2e2; color: #991b1b; }
+
+/* Form Input */
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+button:hover { background-color: #1d4ed8; }
+
+/* List Transaksi */
+.list-transaksi {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.item-transaksi {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #f1f1f1;
+}
+.item-transaksi:last-child { border-bottom: none; }
+.border-masuk { border-left: 5px solid #10b981; }
+.border-keluar { border-left: 5px solid #ef4444; }
+.badge {
+    font-size: 11px;
+    background: #e5e7eb;
+    padding: 3px 8px;
+    border-radius: 12px;
+    color: #4b5563;
+}
+.delete-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: auto;
+    font-size: 12px;
+}

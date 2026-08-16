@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker Keuangan Pribadi</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .card { background-color: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .text-center { text-align: center; }
+        .saldo-box { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+        .saldo-item { flex: 1; padding: 15px; border-radius: 8px; text-align: center; }
+        .masuk { background-color: #d1fae5; color: #065f46; }
+        .keluar { background-color: #fee2e2; color: #991b1b; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input, select, button { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        button { background-color: #2563eb; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background-color: #1d4ed8; }
+        .btn-success { background-color: #10b981; }
+        .btn-success:hover { background-color: #059669; }
+        .list-transaksi { list-style-type: none; padding: 0; margin: 0; }
+        .item-transaksi { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f1f1; }
+        .border-masuk { border-left: 5px solid #10b981; }
+        .border-keluar { border-left: 5px solid #ef4444; }
+        .badge { font-size: 11px; background: #e5e7eb; padding: 3px 8px; border-radius: 12px; color: #4b5563; }
+        .delete-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; width: auto; font-size: 12px; margin-top:5px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center">DompetKu 💰</h2>
+
+    <!-- Ringkasan Saldo -->
+    <div class="card">
+        <h3 class="text-center" style="margin: 0; color: #4b5563;">Total Saldo</h3>
+        <h1 class="text-center" id="total-saldo" style="margin: 5px 0;">Rp 0</h1>
+        <div class="saldo-box">
+            <div class="saldo-item masuk">
+                <small>Pemasukan</small>
+                <h4 id="total-masuk" style="margin: 5px 0;">Rp 0</h4>
+            </div>
+            <div class="saldo-item keluar">
+                <small>Pengeluaran</small>
+                <h4 id="total-keluar" style="margin: 5px 0;">Rp 0</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fitur Import CSV (Baru) -->
+    <div class="card" style="border: 2px dashed #10b981;">
+        <h3>📥 Import Data dari Bank (CSV)</h3>
+        <p style="font-size: 12px; color: #666; margin-top: -10px;">
+            Format Excel/CSV: <i>Keterangan, JumlahAngka, masuk/keluar, NamaBank</i>
+        </p>
+        <input type="file" id="file-csv" accept=".csv">
+        <button type="button" class="btn-success" onclick="prosesCSV()">Upload & Tambahkan Otomatis</button>
+    </div>
+
+    <!-- Form Input Manual -->
+    <div class="card">
+        <h3>Tambah Transaksi Manual</h3>
+        <form id="form-transaksi">
+            <div class="form-group">
+                <input type="text" id="keterangan" required placeholder="Keterangan (mis: Makan siang)">
+            </div>
+            <div class="form-group">
+                <input type="number" id="jumlah" required placeholder="Jumlah (mis: 25000)">
+            </div>
+            <div class="form-group">
+                <select id="jenis">
+                    <option value="keluar">Pengeluaran</option>
+                    <option value="masuk">Pemasukan</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select id="sumber">
+                    <option value="BCA">BCA</option>
+                    <option value="BRI">BRI</option>
+                    <option value="CIMB">CIMB</option>
+                    <option value="Seabank">SeaBank</option>
+                    <option value="DANA">DANA</option>
+                </select>
+            </div>
+            <button type="submit">Simpan Transaksi</button>
+        </form>
+    </div>
+
+    <!-- Riwayat -->
+    <div class="card">
+        <h3>Riwayat Transaksi</h3>
+        <ul class="list-transaksi" id="list-transaksi"></ul>
+    </div>
+</div>
+
+<script>
+    let transaksi = JSON.parse(localStorage.getItem('dataTransaksi')) || [];
+    const listTransaksi = document.getElementById('list-transaksi');
+
+    function formatRupiah(angka) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(angka);
+    }
+
+    function updateUI() {
+        listTransaksi.innerHTML = '';
+        let totalMasuk = 0; let totalKeluar = 0;
+
+        transaksi.forEach((trx, index) => {
+            if (trx.jenis === 'masuk') totalMasuk += trx.jumlah;
+            else totalKeluar += trx.jumlah;
+
+            const li = document.createElement('li');
+            li.classList.add('item-transaksi');
+            li.classList.add(trx.jenis === 'masuk' ? 'border-masuk' : 'border-keluar');
+            li.innerHTML = `
+                <div>
+                    <strong>${trx.keterangan}</strong> <br>
+                    <span class="badge">${trx.sumber}</span>
+                    <small style="color: #6b7280; margin-left: 5px;">${trx.tanggal}</small>
+                </div>
+                <div style="text-align: right;">
+                    <span style="color: ${trx.jenis === 'masuk' ? '#10b981' : '#ef4444'}; font-weight: bold;">
+                        ${trx.jenis === 'masuk' ? '+' : '-'}${formatRupiah(trx.jumlah)}
+                    </span> <br>
+                    <button class="delete-btn" onclick="hapusTransaksi(${index})">Hapus</button>
+                </div>
+            `;
+            listTransaksi.appendChild(li);
+        });
+
+        document.getElementById('total-saldo').innerText = formatRupiah(totalMasuk - totalKeluar);
+        document.getElementById('total-masuk').innerText = formatRupiah(totalMasuk);
+        document.getElementById('total-keluar').innerText = formatRupiah(totalKeluar);
+    }
+
+    // Input Manual
+    document.getElementById('form-transaksi').addEventListener('submit', function(e) {
+        e.preventDefault();
+        transaksi.push({
+            keterangan: document.getElementById('keterangan').value,
+            jumlah: parseInt(document.getElementById('jumlah').value),
+            jenis: document.getElementById('jenis').value,
+            sumber: document.getElementById('sumber').value,
+            tanggal: new Date().toLocaleDateString('id-ID')
+        });
+        localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
+        this.reset();
+        updateUI();
+    });
+
+    function hapusTransaksi(index) {
+        transaksi.splice(index, 1);
+        localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
+        updateUI();
+    }
+
+    // Fitur Import CSV
+    function prosesCSV() {
+        const fileInput = document.getElementById('file-csv');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Pilih file CSV dulu, bre!');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            // Pisahkan data berdasarkan baris (Enter)
+            const baris = text.split('\n');
+            let jumlahDitambahkan = 0;
+
+            baris.forEach(row => {
+                // Pisahkan data per baris berdasarkan koma
+                const kolom = row.split(',');
+                
+                // Pastikan ada 4 kolom supaya nggak error
+                if (kolom.length >= 4) {
+                    const dataBaru = {
+                        keterangan: kolom[0].trim(),
+                        jumlah: parseInt(kolom[1].trim()),
+                        jenis: kolom[2].trim().toLowerCase(), // harus 'masuk' atau 'keluar'
+                        sumber: kolom[3].trim(),
+                        tanggal: new Date().toLocaleDateString('id-ID')
+                    };
+                    
+                    // Kalau datanya valid (angka beneran angka), masukin ke array
+                    if (!isNaN(dataBaru.jumlah)) {
+                        transaksi.push(dataBaru);
+                        jumlahDitambahkan++;
+                    }
+                }
+            });
+
+            // Simpan ke database sementara browser
+            localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
+            updateUI();
+            
+            alert(`Mantap! ${jumlahDitambahkan} transaksi berhasil di-import dari mutasi bank.`);
+            fileInput.value = ""; // Bersihin input file
+        };
+        
+        reader.readAsText(file);
+    }
+
+    updateUI();
+</script>
+
+</body>
+</html>
