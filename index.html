@@ -60,7 +60,40 @@
     <section id="sec-input" class="page-section hidden">
       <div class="card-dashboard">
         <h2 class="card-title">Input Transaksi Manual</h2>
-        <p style="color:#64748b; text-align:center;">Fitur input manual dapat ditambahkan di sini.</p>
+        
+        <form id="formInputManual" class="form-manual">
+          <div class="form-group">
+            <label>Keterangan Transaksi</label>
+            <input type="text" id="inputKeterangan" placeholder="Contoh: Beli Kopi / Transfer" required>
+          </div>
+
+          <div class="form-group">
+            <label>Nominal (Rp)</label>
+            <input type="number" id="inputNominal" placeholder="50000" min="1" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Jenis Transaksi</label>
+              <select id="inputJenis">
+                <option value="keluar">Pengeluaran (-)</option>
+                <option value="masuk">Pemasukan (+)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Sumber Dana</label>
+              <select id="inputSumber">
+                <option value="BRI">BRI</option>
+                <option value="CIMB">CIMB (OCTO)</option>
+                <option value="DANA">DANA</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">💾 Simpan Transaksi</button>
+        </form>
       </div>
     </section>
 
