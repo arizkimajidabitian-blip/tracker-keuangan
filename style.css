@@ -1,27 +1,74 @@
+* { box-sizing: border-box; }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f3f4f6;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     color: #333;
 }
-.container {
-    max-width: 500px;
-    margin: 0 auto;
+
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+
+/* Login Styling */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
+.login-card { width: 350px; }
+
+/* Dashboard Layout & Sidebar */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 240px;
+    background-color: #1e293b;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-brand { font-size: 20px; text-align: center; margin-bottom: 30px; }
+.sidebar-menu { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+.sidebar-menu li {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.sidebar-menu li:hover, .sidebar-menu li.active {
+    background-color: #2563eb;
+}
+.btn-logout {
+    background-color: #ef4444;
+    margin-top: auto;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    padding: 30px;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Components UI */
 .card {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     margin-bottom: 20px;
+    max-width: 600px;
 }
-.text-center { text-align: center; }
 
-/* Box Saldo */
 .saldo-box {
     display: flex;
-    justify-content: space-between;
     gap: 10px;
     margin-top: 20px;
 }
@@ -34,7 +81,6 @@ body {
 .masuk { background-color: #d1fae5; color: #065f46; }
 .keluar { background-color: #fee2e2; color: #991b1b; }
 
-/* Form Input & Buttons */
 .form-group { margin-bottom: 15px; }
 label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
 input, select, button {
@@ -42,7 +88,6 @@ input, select, button {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    box-sizing: border-box;
     font-family: inherit;
 }
 button {
@@ -52,22 +97,13 @@ button {
     cursor: pointer;
     font-weight: bold;
     margin-top: 10px;
-    transition: 0.3s;
 }
 button:hover { background-color: #1d4ed8; }
 .btn-success { background-color: #10b981; }
-.btn-success:hover { background-color: #059669; }
-
-/* Tombol Sync Gmail Baru */
 .btn-sync { background-color: #f59e0b; margin-top: 15px; }
-.btn-sync:hover { background-color: #d97706; }
 
 /* List Transaksi */
-.list-transaksi {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
+.list-transaksi { list-style-type: none; padding: 0; margin: 0; }
 .item-transaksi {
     display: flex;
     justify-content: space-between;
@@ -75,24 +111,7 @@ button:hover { background-color: #1d4ed8; }
     padding: 12px;
     border-bottom: 1px solid #f1f1f1;
 }
-.item-transaksi:last-child { border-bottom: none; }
 .border-masuk { border-left: 5px solid #10b981; }
 .border-keluar { border-left: 5px solid #ef4444; }
-.badge {
-    font-size: 11px;
-    background: #e5e7eb;
-    padding: 3px 8px;
-    border-radius: 12px;
-    color: #4b5563;
-}
-.delete-btn {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    width: auto;
-    font-size: 12px;
-    margin-top: 5px;
-}
+.badge { font-size: 11px; background: #e5e7eb; padding: 3px 8px; border-radius: 12px; }
+.delete-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; width: auto; font-size: 12px; }
