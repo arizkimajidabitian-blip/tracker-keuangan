@@ -3,80 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracker Keuangan Pribadi</title>
-    <!-- Memanggil file CSS -->
+    <title>DompetKu - Financial Tracker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-    <h2 class="text-center">DompetKu 💰</h2>
-
-    <!-- Ringkasan Saldo -->
-    <div class="card">
-        <h3 class="text-center" style="margin: 0; color: #4b5563;">Total Saldo</h3>
-        <h1 class="text-center" id="total-saldo" style="margin: 5px 0;">Rp 0</h1>
-        <div class="saldo-box">
-            <div class="saldo-item masuk">
-                <small>Pemasukan</small>
-                <h4 id="total-masuk" style="margin: 5px 0;">Rp 0</h4>
-            </div>
-            <div class="saldo-item keluar">
-                <small>Pengeluaran</small>
-                <h4 id="total-keluar" style="margin: 5px 0;">Rp 0</h4>
-            </div>
+    <!-- HALAMAN LOGIN -->
+    <div id="login-screen" class="login-wrapper">
+        <div class="card login-card">
+            <h2 class="text-center">Login DompetKu 💰</h2>
+            <form id="form-login">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Masukkan username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Masukkan password" required>
+                </div>
+                <button type="submit">Masuk Aplikasi</button>
+                <p style="font-size: 11px; color: #888; text-align: center; margin-top: 10px;">Default: admin | 12345</p>
+            </form>
         </div>
-        <!-- Tombol Sinkronisasi Gmail -->
-        <button type="button" class="btn-sync" id="btn-sync" onclick="sinkronisasiGmail()">🔄 Tarik Data Otomatis (Gmail BRI)</button>
     </div>
 
-    <!-- Fitur Import CSV -->
-    <div class="card" style="border: 2px dashed #10b981;">
-        <h3>📥 Import Data dari Bank (CSV)</h3>
-        <p style="font-size: 12px; color: #666; margin-top: -10px;">
-            Format Excel/CSV: <i>Keterangan, JumlahAngka, masuk/keluar, NamaBank</i>
-        </p>
-        <input type="file" id="file-csv" accept=".csv">
-        <button type="button" class="btn-success" onclick="prosesCSV()">Upload & Tambahkan Otomatis</button>
+    <!-- UTAMA (DASHBOARD) -->
+    <div id="app-screen" class="app-layout hidden">
+        <!-- Sidebar Kiri -->
+        <aside class="sidebar">
+            <h2 class="sidebar-brand">DompetKu 💰</h2>
+            <ul class="sidebar-menu">
+                <li class="active" onclick="switchTab('tab-dashboard', this)">📊 Dashboard</li>
+                <li onclick="switchTab('tab-tambah', this)">➕ Input Transaksi</li>
+                <li onclick="switchTab('tab-riwayat', this)">📜 Riwayat Transaksi</li>
+                <li onclick="switchTab('tab-import', this)">📥 Import CSV</li>
+            </ul>
+            <button class="btn-logout" onclick="logout()">Logout 🚪</button>
+        </aside>
+
+        <!-- Konten Utama (Kanan) -->
+        <main class="main-content">
+            
+            <!-- MENU 1: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content active">
+                <h2>Dashboard Saldo</h2>
+                <div class="card">
+                    <h3 class="text-center" style="margin: 0; color: #4b5563;">Total Saldo</h3>
+                    <h1 class="text-center" id="total-saldo" style="margin: 5px 0;">Rp 0</h1>
+                    <div class="saldo-box">
+                        <div class="saldo-item masuk">
+                            <small>Pemasukan</small>
+                            <h4 id="total-masuk" style="margin: 5px 0;">Rp 0</h4>
+                        </div>
+                        <div class="saldo-item keluar">
+                            <small>Pengeluaran</small>
+                            <h4 id="total-keluar" style="margin: 5px 0;">Rp 0</h4>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-sync" id="btn-sync" onclick="sinkronisasiGmail()">🔄 Tarik Data Otomatis (Gmail BRI)</button>
+                </div>
+            </section>
+
+            <!-- MENU 2: INPUT TRANSAKSI -->
+            <section id="tab-tambah" class="tab-content">
+                <h2>Tambah Transaksi Manual</h2>
+                <div class="card">
+                    <form id="form-transaksi">
+                        <div class="form-group">
+                            <label>Keterangan</label>
+                            <input type="text" id="keterangan" required placeholder="mis: Makan siang">
+                        </div>
+                        <div class="form-group">
+                            <label>Jumlah Nominal (Rp)</label>
+                            <input type="number" id="jumlah" required placeholder="mis: 25000">
+                        </div>
+                        <div class="form-group">
+                            <label>Jenis Transaksi</label>
+                            <select id="jenis">
+                                <option value="keluar">Pengeluaran</option>
+                                <option value="masuk">Pemasukan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Sumber Dana</label>
+                            <select id="sumber">
+                                <option value="BCA">BCA</option>
+                                <option value="BRI">BRI</option>
+                                <option value="CIMB">CIMB</option>
+                                <option value="Seabank">SeaBank</option>
+                                <option value="DANA">DANA</option>
+                            </select>
+                        </div>
+                        <button type="submit">Simpan Transaksi</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- MENU 3: RIWAYAT TRANSAKSI -->
+            <section id="tab-riwayat" class="tab-content">
+                <h2>Riwayat Transaksi</h2>
+                <div class="card">
+                    <ul class="list-transaksi" id="list-transaksi"></ul>
+                </div>
+            </section>
+
+            <!-- MENU 4: IMPORT CSV -->
+            <section id="tab-import" class="tab-content">
+                <h2>Import Data dari Bank (CSV)</h2>
+                <div class="card" style="border: 2px dashed #10b981;">
+                    <p style="font-size: 13px; color: #666;">
+                        Format Excel/CSV: <i>Keterangan, JumlahAngka, masuk/keluar, NamaBank</i>
+                    </p>
+                    <input type="file" id="file-csv" accept=".csv">
+                    <button type="button" class="btn-success" onclick="prosesCSV()">Upload & Tambahkan Otomatis</button>
+                </div>
+            </section>
+
+        </main>
     </div>
 
-    <!-- Form Input Manual -->
-    <div class="card">
-        <h3>Tambah Transaksi Manual</h3>
-        <form id="form-transaksi">
-            <div class="form-group">
-                <input type="text" id="keterangan" required placeholder="Keterangan (mis: Makan siang)">
-            </div>
-            <div class="form-group">
-                <input type="number" id="jumlah" required placeholder="Jumlah (mis: 25000)">
-            </div>
-            <div class="form-group">
-                <select id="jenis">
-                    <option value="keluar">Pengeluaran</option>
-                    <option value="masuk">Pemasukan</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <select id="sumber">
-                    <option value="BCA">BCA</option>
-                    <option value="BRI">BRI</option>
-                    <option value="CIMB">CIMB</option>
-                    <option value="Seabank">SeaBank</option>
-                    <option value="DANA">DANA</option>
-                </select>
-            </div>
-            <button type="submit">Simpan Transaksi</button>
-        </form>
-    </div>
-
-    <!-- Riwayat -->
-    <div class="card">
-        <h3>Riwayat Transaksi</h3>
-        <ul class="list-transaksi" id="list-transaksi"></ul>
-    </div>
-</div>
-
-<!-- Memanggil file JavaScript -->
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
