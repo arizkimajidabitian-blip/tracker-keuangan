@@ -1,472 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DompetKu - Financial Tracker</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        .hidden { display: none !important; }
-        .text-center { text-align: center; }
-
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .login-card { 
-            width: 100%;
-            max-width: 400px; 
-        }
-
-        .app-layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #1e293b;
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
-        .sidebar-brand { font-size: 20px; text-align: center; margin-bottom: 30px; }
-        .sidebar-menu { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .sidebar-menu li {
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 15px;
-        }
-        .sidebar-menu li:hover, .sidebar-menu li.active {
-            background-color: #2563eb;
-        }
-        .btn-logout {
-            background-color: #ef4444;
-            margin-top: auto;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .tab-content { 
-            display: none; 
-            width: 100%;
-            max-width: 600px;
-        }
-        .tab-content.active { display: block; }
-
-        .tab-title {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #1e293b;
-        }
-
-        .card {
-            background-color: #ffffff;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin: 0 auto 20px auto;
-            width: 100%;
-        }
-
-        .saldo-box {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        .saldo-item {
-            flex: 1;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .masuk { background-color: #d1fae5; color: #065f46; }
-        .keluar { background-color: #fee2e2; color: #991b1b; }
-
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; }
-        input, select, button {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 14px;
-        }
-        button {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        button:hover { background-color: #1d4ed8; }
-        .btn-success { background-color: #10b981; }
-        .btn-sync { background-color: #f59e0b; margin-top: 15px; }
-
-        .list-transaksi { list-style-type: none; padding: 0; margin: 0; }
-        .item-transaksi {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px;
-            border-bottom: 1px solid #f1f1f1;
-        }
-        .border-masuk { border-left: 5px solid #10b981; }
-        .border-keluar { border-left: 5px solid #ef4444; }
-        .badge { font-size: 11px; background: #e5e7eb; padding: 4px 8px; border-radius: 12px; }
-        .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; width: auto; font-size: 12px; margin-top: 4px; }
-
-        @media (max-width: 768px) {
-            .app-layout {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                padding: 15px;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                flex-wrap: wrap;
-            }
-            .sidebar-brand { 
-                font-size: 18px; 
-                margin-bottom: 0; 
-            }
-            .sidebar-menu {
-                display: flex;
-                width: 100%;
-                overflow-x: auto;
-                margin-top: 15px;
-                gap: 5px;
-            }
-            .sidebar-menu li {
-                white-space: nowrap;
-                padding: 8px 12px;
-                margin-bottom: 0;
-                font-size: 13px;
-            }
-            .btn-logout {
-                margin-top: 0;
-                width: auto;
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-            .main-content {
-                padding: 15px 10px;
-            }
-            .card {
-                padding: 16px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DompetKu Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="login-screen" class="login-wrapper">
-        <div class="card login-card">
-            <h2 class="text-center">Login DompetKu 💰</h2>
-            <form id="form-login">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="username" placeholder="Masukkan username" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="password" placeholder="Masukkan password" required>
-                </div>
-                <button type="submit">Masuk Aplikasi</button>
-                <p style="font-size: 11px; color: #888; text-align: center; margin-top: 10px;">Default: admin | 12345</p>
-            </form>
+  <!-- SIDEBAR BARU -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <span class="logo">👑</span> DompetKu
+      </div>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active">📊 Dashboard</a>
+        <a href="#" class="nav-item">➕ Input Transaksi</a>
+        <a href="#" class="nav-item">📜 Riwayat Transaksi</a>
+        <a href="#" class="nav-item">📑 Import CSV</a>
+      </nav>
+    </div>
+
+    <!-- LOGOUT POJOK BAWAH -->
+    <div class="sidebar-bottom">
+      <button class="btn-logout" id="btnLogout">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- KONTEN UTAMA -->
+  <main class="main-content">
+    <div class="card-dashboard">
+      <h2 class="card-title">Dashboard Saldo</h2>
+
+      <div class="total-saldo-box">
+        <span class="saldo-label">Total Saldo</span>
+        <h1 id="totalSaldoDisplay">Rp 0</h1>
+      </div>
+
+      <div class="stat-box-container">
+        <div class="stat-box masuk">
+          <span>Pemasukan</span>
+          <h3 id="pemasukanDisplay">Rp 0</h3>
         </div>
+        <div class="stat-box keluar">
+          <span>Pengeluaran</span>
+          <h3 id="pengeluaranDisplay">Rp 0</h3>
+        </div>
+      </div>
+
+      <button class="btn-pull-data" id="btnSync">🔄 Tarik Data Otomatis (Gmail)</button>
     </div>
 
-    <div id="app-screen" class="app-layout hidden">
-        <aside class="sidebar">
-            <h2 class="sidebar-brand">DompetKu 💰</h2>
-            <button class="btn-logout" onclick="logout()">Logout 🚪</button>
-            <ul class="sidebar-menu">
-                <li class="active" onclick="switchTab('tab-dashboard', this)">📊 Dashboard</li>
-                <li onclick="switchTab('tab-tambah', this)">➕ Input Transaksi</li>
-                <li onclick="switchTab('tab-riwayat', this)">📜 Riwayat Transaksi</li>
-                <li onclick="switchTab('tab-import', this)">📥 Import CSV</li>
-            </ul>
-        </aside>
-
-        <main class="main-content">
-            
-            <section id="tab-dashboard" class="tab-content active">
-                <h2 class="tab-title">Dashboard Saldo</h2>
-                <div class="card">
-                    <h3 class="text-center" style="margin: 0; color: #4b5563;">Total Saldo</h3>
-                    <h1 class="text-center" id="total-saldo" style="margin: 5px 0;">Rp 0</h1>
-                    <div class="saldo-box">
-                        <div class="saldo-item masuk">
-                            <small>Pemasukan</small>
-                            <h4 id="total-masuk" style="margin: 5px 0;">Rp 0</h4>
-                        </div>
-                        <div class="saldo-item keluar">
-                            <small>Pengeluaran</small>
-                            <h4 id="total-keluar" style="margin: 5px 0;">Rp 0</h4>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-sync" id="btn-sync" onclick="sinkronisasiGmail()">🔄 Tarik Data Otomatis (Gmail BRI)</button>
-                </div>
-            </section>
-
-            <section id="tab-tambah" class="tab-content">
-                <h2 class="tab-title">Tambah Transaksi Manual</h2>
-                <div class="card">
-                    <form id="form-transaksi">
-                        <div class="form-group">
-                            <label>Keterangan</label>
-                            <input type="text" id="keterangan" required placeholder="mis: Makan siang">
-                        </div>
-                        <div class="form-group">
-                            <label>Jumlah Nominal (Rp)</label>
-                            <input type="number" id="jumlah" required placeholder="mis: 25000">
-                        </div>
-                        <div class="form-group">
-                            <label>Jenis Transaksi</label>
-                            <select id="jenis">
-                                <option value="keluar">Pengeluaran</option>
-                                <option value="masuk">Pemasukan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Sumber Dana</label>
-                            <select id="sumber">
-                                <option value="BCA">BCA</option>
-                                <option value="BRI">BRI</option>
-                                <option value="CIMB">CIMB</option>
-                                <option value="Seabank">SeaBank</option>
-                                <option value="DANA">DANA</option>
-                            </select>
-                        </div>
-                        <button type="submit">Simpan Transaksi</button>
-                    </form>
-                </div>
-            </section>
-
-            <section id="tab-riwayat" class="tab-content">
-                <h2 class="tab-title">Riwayat Transaksi</h2>
-                <div class="card">
-                    <ul class="list-transaksi" id="list-transaksi"></ul>
-                </div>
-            </section>
-
-            <section id="tab-import" class="tab-content">
-                <h2 class="tab-title">Import Data dari Bank (CSV)</h2>
-                <div class="card" style="border: 2px dashed #10b981;">
-                    <p style="font-size: 13px; color: #666; text-align: center;">
-                        Format Excel/CSV: <i>Keterangan, JumlahAngka, masuk/keluar, NamaBank</i>
-                    </p>
-                    <input type="file" id="file-csv" accept=".csv">
-                    <button type="button" class="btn-success" onclick="prosesCSV()">Upload & Tambahkan Otomatis</button>
-                </div>
-            </section>
-
-        </main>
+    <!-- CONTAINER RIWAYAT -->
+    <div class="card-riwayat">
+      <h3>Riwayat Transaksi</h3>
+      <div id="riwayatList" class="riwayat-list"></div>
     </div>
+  </main>
 
-    <script>
-        const URL_API_GAS = "https://script.google.com/macros/s/AKfycbxiKAmbyy46MbzVwSYkDtXPofa8TYOJlKaG8_MRESjxxI2Zb-v1uaLCMKvc4upfC7vArg/exec";
-
-        let transaksi = JSON.parse(localStorage.getItem('dataTransaksi')) || [];
-
-        document.getElementById('form-login').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-
-            if (user === 'admin' && pass === '12345') {
-                localStorage.setItem('isLoggedIn', 'true');
-                checkLoginState();
-            } else {
-                alert('Username atau Password salah bre!');
-            }
-        });
-
-        function checkLoginState() {
-            const isLogged = localStorage.getItem('isLoggedIn');
-            if (isLogged === 'true') {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-screen').classList.remove('hidden');
-                updateUI();
-            } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('app-screen').classList.add('hidden');
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            checkLoginState();
-        }
-
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
-
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-        }
-
-        function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(angka);
-        }
-
-        function updateUI() {
-            const listTransaksi = document.getElementById('list-transaksi');
-            listTransaksi.innerHTML = '';
-            let totalMasuk = 0, totalKeluar = 0;
-
-            transaksi.forEach((trx, index) => {
-                if (trx.jenis === 'masuk') totalMasuk += trx.jumlah;
-                else totalKeluar += trx.jumlah;
-
-                const li = document.createElement('li');
-                li.classList.add('item-transaksi', trx.jenis === 'masuk' ? 'border-masuk' : 'border-keluar');
-                li.innerHTML = `
-                    <div>
-                        <strong>${trx.keterangan}</strong> <br>
-                        <span class="badge">${trx.sumber}</span>
-                        <small style="color: #6b7280; margin-left: 5px;">${trx.tanggal}</small>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="color: ${trx.jenis === 'masuk' ? '#10b981' : '#ef4444'}; font-weight: bold;">
-                            ${trx.jenis === 'masuk' ? '+' : '-'}${formatRupiah(trx.jumlah)}
-                        </span> <br>
-                        <button class="delete-btn" onclick="hapusTransaksi(${index})">Hapus</button>
-                    </div>
-                `;
-                listTransaksi.appendChild(li);
-            });
-
-            document.getElementById('total-saldo').innerText = formatRupiah(totalMasuk - totalKeluar);
-            document.getElementById('total-masuk').innerText = formatRupiah(totalMasuk);
-            document.getElementById('total-keluar').innerText = formatRupiah(totalKeluar);
-        }
-
-        // PENGECEKAN DUPLIKASI LEBIH KETAT (PEMBERSIHAN STRING & NOMINAL)
-        async function sinkronisasiGmail() {
-            const btnSync = document.getElementById('btn-sync');
-            btnSync.innerText = "⏳ Sedang menarik data...";
-            btnSync.disabled = true;
-
-            try {
-                const response = await fetch(URL_API_GAS, { method: 'GET', redirect: 'follow' });
-                const dataBaru = await response.json();
-
-                if (Array.isArray(dataBaru) && dataBaru.length > 0) {
-                    let jumlahDataBaru = 0;
-
-                    dataBaru.forEach(itemBaru => {
-                        // Bandingkan Keterangan & Nominal (Abaikan Perbedaan Format Tanggal)
-                        const sudahAda = transaksi.some(itemLama => 
-                            itemLama.keterangan.trim().toLowerCase() === itemBaru.keterangan.trim().toLowerCase() &&
-                            parseInt(itemLama.jumlah) === parseInt(itemBaru.jumlah)
-                        );
-
-                        if (!sudahAda) {
-                            transaksi.unshift(itemBaru);
-                            jumlahDataBaru++;
-                        }
-                    });
-
-                    if (jumlahDataBaru > 0) {
-                        localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
-                        updateUI();
-                        alert(`Berhasil menambahkan ${jumlahDataBaru} transaksi baru dari BRI!`);
-                    } else {
-                        alert("Semua transaksi BRI terbaru sudah tersimpan sebelumnya (tidak ada data ganda).");
-                    }
-                } else {
-                    alert("Tidak ada transaksi BRI baru ditemukan.");
-                }
-            } catch (error) {
-                alert("Gagal menarik data dari server.");
-                console.error(error);
-            } finally {
-                btnSync.innerText = "🔄 Tarik Data Otomatis (Gmail BRI)";
-                btnSync.disabled = false;
-            }
-        }
-
-        document.getElementById('form-transaksi').addEventListener('submit', function(e) {
-            e.preventDefault();
-            transaksi.unshift({
-                keterangan: document.getElementById('keterangan').value,
-                jumlah: parseInt(document.getElementById('jumlah').value),
-                jenis: document.getElementById('jenis').value,
-                sumber: document.getElementById('sumber').value,
-                tanggal: new Date().toLocaleDateString('id-ID')
-            });
-            localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
-            this.reset();
-            updateUI();
-            alert('Transaksi berhasil disimpan!');
-        });
-
-        function hapusTransaksi(index) {
-            transaksi.splice(index, 1);
-            localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
-            updateUI();
-        }
-
-        function prosesCSV() {
-            const file = document.getElementById('file-csv').files[0];
-            if (!file) return alert('Pilih file CSV dulu, bre!');
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const baris = e.target.result.split('\n');
-                let count = 0;
-                baris.forEach(row => {
-                    const k = row.split(',');
-                    if (k.length >= 4 && !isNaN(parseInt(k[1]))) {
-                        transaksi.unshift({
-                            keterangan: k[0].trim(),
-                            jumlah: parseInt(k[1].trim()),
-                            jenis: k[2].trim().toLowerCase(),
-                            sumber: k[3].trim(),
-                            tanggal: new Date().toLocaleDateString('id-ID')
-                        });
-                        count++;
-                    }
-                });
-                localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
-                updateUI();
-                alert(`Mantap! ${count} data berhasil di-import.`);
-            };
-            reader.readAsText(file);
-        }
-
-        checkLoginState();
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
