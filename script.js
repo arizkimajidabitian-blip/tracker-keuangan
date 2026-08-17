@@ -1,8 +1,29 @@
-// URL Web App GAS Kamu
+// ISI DENGAN URL WEB APP GOOGLE APPS SCRIPT KAMU
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxiKAmbyy46MbzVwSYkDtXPofa8TYOJlKaG8_MRESjxxI2Zb-v1uaLCMKvc4upfC7vArg/exec";
 
 let listTransaksi = [];
 
+// 1. NAVIGASI SWITCH PAGE (MENU BISA DIKLIK)
+const navItems = document.querySelectorAll('.nav-menu .nav-item');
+const pageSections = document.querySelectorAll('.page-section');
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    navItems.forEach(nav => nav.classList.remove('active'));
+    pageSections.forEach(sec => sec.classList.add('hidden'));
+
+    item.classList.add('active');
+    const targetId = item.getAttribute('data-target');
+    document.getElementById(targetId).classList.remove('hidden');
+  });
+});
+
+// 2. LOGOUT EVENT
+document.getElementById('btnLogout').addEventListener('click', () => {
+  alert("Berhasil Logout!");
+});
+
+// 3. TARIK DATA DARI GMAIL (APPS SCRIPT)
 document.getElementById("btnSync").addEventListener("click", fetchGmailData);
 
 async function fetchGmailData() {
@@ -11,7 +32,6 @@ async function fetchGmailData() {
   btn.disabled = true;
 
   try {
-    // Gunakan method GET dengan mode cors & redirect follow
     const response = await fetch(GAS_URL, {
       method: "GET",
       mode: "cors",
@@ -23,12 +43,10 @@ async function fetchGmailData() {
     }
 
     const data = await response.json();
-    console.log("Data berhasil ditarik:", data);
-
     listTransaksi = data;
     updateUI();
   } catch (err) {
-    alert("Gagal mengambil data dari Gmail! Tekan F12 -> Cek tab Console untuk detail error.");
+    alert("Gagal mengambil data dari Gmail! Buka Console (F12) untuk detail.");
     console.error("Detail Error Tarik Data:", err);
   } finally {
     btn.innerText = "🔄 Tarik Data Otomatis (Gmail)";
@@ -36,6 +54,7 @@ async function fetchGmailData() {
   }
 }
 
+// 4. UPDATE UI DASHBOARD & RIWAYAT
 function updateUI() {
   let totalMasuk = 0;
   let totalKeluar = 0;
