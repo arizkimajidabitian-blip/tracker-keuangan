@@ -17,7 +17,6 @@
         .hidden { display: none !important; }
         .text-center { text-align: center; }
 
-        /* Login Screen Layout */
         .login-wrapper {
             display: flex;
             justify-content: center;
@@ -30,13 +29,11 @@
             max-width: 400px; 
         }
 
-        /* Responsive Dashboard Layout */
         .app-layout {
             display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar Desktop */
         .sidebar {
             width: 250px;
             background-color: #1e293b;
@@ -64,7 +61,6 @@
             margin-top: auto;
         }
 
-        /* Main Area (Center Alignment) */
         .main-content {
             flex: 1;
             padding: 30px 20px;
@@ -87,7 +83,6 @@
             color: #1e293b;
         }
 
-        /* Cards & Form Components */
         .card {
             background-color: #ffffff;
             padding: 24px;
@@ -133,7 +128,6 @@
         .btn-success { background-color: #10b981; }
         .btn-sync { background-color: #f59e0b; margin-top: 15px; }
 
-        /* List Transaksi UI */
         .list-transaksi { list-style-type: none; padding: 0; margin: 0; }
         .item-transaksi {
             display: flex;
@@ -147,7 +141,6 @@
         .badge { font-size: 11px; background: #e5e7eb; padding: 4px 8px; border-radius: 12px; }
         .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; width: auto; font-size: 12px; margin-top: 4px; }
 
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .app-layout {
                 flex-direction: column;
@@ -194,7 +187,6 @@
 </head>
 <body>
 
-    <!-- HALAMAN LOGIN -->
     <div id="login-screen" class="login-wrapper">
         <div class="card login-card">
             <h2 class="text-center">Login DompetKu 💰</h2>
@@ -213,7 +205,6 @@
         </div>
     </div>
 
-    <!-- UTAMA (DASHBOARD) -->
     <div id="app-screen" class="app-layout hidden">
         <aside class="sidebar">
             <h2 class="sidebar-brand">DompetKu 💰</h2>
@@ -228,7 +219,6 @@
 
         <main class="main-content">
             
-            <!-- MENU 1: DASHBOARD -->
             <section id="tab-dashboard" class="tab-content active">
                 <h2 class="tab-title">Dashboard Saldo</h2>
                 <div class="card">
@@ -248,7 +238,6 @@
                 </div>
             </section>
 
-            <!-- MENU 2: INPUT TRANSAKSI -->
             <section id="tab-tambah" class="tab-content">
                 <h2 class="tab-title">Tambah Transaksi Manual</h2>
                 <div class="card">
@@ -283,7 +272,6 @@
                 </div>
             </section>
 
-            <!-- MENU 3: RIWAYAT TRANSAKSI -->
             <section id="tab-riwayat" class="tab-content">
                 <h2 class="tab-title">Riwayat Transaksi</h2>
                 <div class="card">
@@ -291,7 +279,6 @@
                 </div>
             </section>
 
-            <!-- MENU 4: IMPORT CSV -->
             <section id="tab-import" class="tab-content">
                 <h2 class="tab-title">Import Data dari Bank (CSV)</h2>
                 <div class="card" style="border: 2px dashed #10b981;">
@@ -311,7 +298,6 @@
 
         let transaksi = JSON.parse(localStorage.getItem('dataTransaksi')) || [];
 
-        // Logika Login
         document.getElementById('form-login').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('username').value;
@@ -342,7 +328,6 @@
             checkLoginState();
         }
 
-        // Navigasi Tab
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
@@ -351,7 +336,6 @@
             element.classList.add('active');
         }
 
-        // Format Currency & Render UI
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(angka);
         }
@@ -388,7 +372,7 @@
             document.getElementById('total-keluar').innerText = formatRupiah(totalKeluar);
         }
 
-        // Fetch Data Gmail API (DENGAN CEK DUPLIKASI DATA)
+        // PENGECEKAN DUPLIKASI LEBIH KETAT (PEMBERSIHAN STRING & NOMINAL)
         async function sinkronisasiGmail() {
             const btnSync = document.getElementById('btn-sync');
             btnSync.innerText = "⏳ Sedang menarik data...";
@@ -402,11 +386,10 @@
                     let jumlahDataBaru = 0;
 
                     dataBaru.forEach(itemBaru => {
-                        // Cek apakah data sudah pernah disimpan (kombinasi tanggal + keterangan + jumlah)
+                        // Bandingkan Keterangan & Nominal (Abaikan Perbedaan Format Tanggal)
                         const sudahAda = transaksi.some(itemLama => 
-                            itemLama.tanggal === itemBaru.tanggal &&
-                            itemLama.keterangan === itemBaru.keterangan &&
-                            itemLama.jumlah === itemBaru.jumlah
+                            itemLama.keterangan.trim().toLowerCase() === itemBaru.keterangan.trim().toLowerCase() &&
+                            parseInt(itemLama.jumlah) === parseInt(itemBaru.jumlah)
                         );
 
                         if (!sudahAda) {
@@ -434,7 +417,6 @@
             }
         }
 
-        // Form Submit Manual
         document.getElementById('form-transaksi').addEventListener('submit', function(e) {
             e.preventDefault();
             transaksi.unshift({
@@ -456,7 +438,6 @@
             updateUI();
         }
 
-        // Upload CSV
         function prosesCSV() {
             const file = document.getElementById('file-csv').files[0];
             if (!file) return alert('Pilih file CSV dulu, bre!');
@@ -485,7 +466,6 @@
             reader.readAsText(file);
         }
 
-        // Init App
         checkLoginState();
     </script>
 </body>
