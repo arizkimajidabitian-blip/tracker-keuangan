@@ -8,21 +8,21 @@
 </head>
 <body>
 
-  <!-- SIDEBAR BARU -->
+  <!-- SIDEBAR NAVIGATION -->
   <aside class="sidebar">
     <div class="sidebar-top">
       <div class="brand">
         <span class="logo">👑</span> DompetKu
       </div>
       <nav class="nav-menu">
-        <a href="#" class="nav-item active">📊 Dashboard</a>
-        <a href="#" class="nav-item">➕ Input Transaksi</a>
-        <a href="#" class="nav-item">📜 Riwayat Transaksi</a>
-        <a href="#" class="nav-item">📑 Import CSV</a>
+        <button class="nav-item active" data-target="sec-dashboard">📊 Dashboard</button>
+        <button class="nav-item" data-target="sec-input">➕ Input Transaksi</button>
+        <button class="nav-item" data-target="sec-riwayat">📜 Riwayat Transaksi</button>
+        <button class="nav-item" data-target="sec-import">📑 Import CSV</button>
       </nav>
     </div>
 
-    <!-- LOGOUT POJOK BAWAH -->
+    <!-- TOMBOL LOGOUT POJOK BAWAH -->
     <div class="sidebar-bottom">
       <button class="btn-logout" id="btnLogout">🚪 Logout</button>
     </div>
@@ -30,33 +30,56 @@
 
   <!-- KONTEN UTAMA -->
   <main class="main-content">
-    <div class="card-dashboard">
-      <h2 class="card-title">Dashboard Saldo</h2>
+    
+    <!-- HALAMAN 1: DASHBOARD -->
+    <section id="sec-dashboard" class="page-section active">
+      <div class="card-dashboard">
+        <h2 class="card-title">Dashboard Saldo</h2>
 
-      <div class="total-saldo-box">
-        <span class="saldo-label">Total Saldo</span>
-        <h1 id="totalSaldoDisplay">Rp 0</h1>
-      </div>
-
-      <div class="stat-box-container">
-        <div class="stat-box masuk">
-          <span>Pemasukan</span>
-          <h3 id="pemasukanDisplay">Rp 0</h3>
+        <div class="total-saldo-box">
+          <span class="saldo-label">Total Saldo</span>
+          <h1 id="totalSaldoDisplay">Rp 0</h1>
         </div>
-        <div class="stat-box keluar">
-          <span>Pengeluaran</span>
-          <h3 id="pengeluaranDisplay">Rp 0</h3>
+
+        <div class="stat-box-container">
+          <div class="stat-box masuk">
+            <span>Pemasukan</span>
+            <h3 id="pemasukanDisplay">Rp 0</h3>
+          </div>
+          <div class="stat-box keluar">
+            <span>Pengeluaran</span>
+            <h3 id="pengeluaranDisplay">Rp 0</h3>
+          </div>
         </div>
+
+        <button class="btn-pull-data" id="btnSync">🔄 Tarik Data Otomatis (Gmail)</button>
       </div>
+    </section>
 
-      <button class="btn-pull-data" id="btnSync">🔄 Tarik Data Otomatis (Gmail)</button>
-    </div>
+    <!-- HALAMAN 2: INPUT TRANSAKSI -->
+    <section id="sec-input" class="page-section hidden">
+      <div class="card-dashboard">
+        <h2 class="card-title">Input Transaksi Manual</h2>
+        <p style="color:#64748b; text-align:center;">Fitur input manual dapat ditambahkan di sini.</p>
+      </div>
+    </section>
 
-    <!-- CONTAINER RIWAYAT -->
-    <div class="card-riwayat">
-      <h3>Riwayat Transaksi</h3>
-      <div id="riwayatList" class="riwayat-list"></div>
-    </div>
+    <!-- HALAMAN 3: RIWAYAT TRANSAKSI -->
+    <section id="sec-riwayat" class="page-section hidden">
+      <div class="card-riwayat">
+        <h3>Riwayat Transaksi</h3>
+        <div id="riwayatList" class="riwayat-list"></div>
+      </div>
+    </section>
+
+    <!-- HALAMAN 4: IMPORT CSV -->
+    <section id="sec-import" class="page-section hidden">
+      <div class="card-dashboard">
+        <h2 class="card-title">Import File CSV</h2>
+        <p style="color:#64748b; text-align:center;">Fitur import CSV dapat ditambahkan di sini.</p>
+      </div>
+    </section>
+
   </main>
 
   <script src="script.js"></script>
