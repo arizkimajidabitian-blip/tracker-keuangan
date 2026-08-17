@@ -1,38 +1,63 @@
-const form = document.getElementById('form-transaksi');
-const inputKeterangan = document.getElementById('keterangan');
-const inputJumlah = document.getElementById('jumlah');
-const inputJenis = document.getElementById('jenis');
-const inputSumber = document.getElementById('sumber');
-const listTransaksi = document.getElementById('list-transaksi');
-
-// NANTI KITA ISI LINK INI SETELAH GOOGLE APPS SCRIPT SELESAI
 const URL_API_GAS = "https://script.google.com/macros/s/AKfycbxiKAmbyy46MbzVwSYkDtXPofa8TYOJlKaG8_MRESjxxI2Zb-v1uaLCMKvc4upfC7vArg/exec";
 
-// Tarik data dari LocalStorage, kalau kosong bikin array kosong []
 let transaksi = JSON.parse(localStorage.getItem('dataTransaksi')) || [];
 
-// Fungsi format rupiah
+// Logika Autentikasi Login
+document.getElementById('form-login').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+
+    if (user === 'admin' && pass === '12345') {
+        localStorage.setItem('isLoggedIn', 'true');
+        checkLoginState();
+    } else {
+        alert('Username atau Password salah bre!');
+    }
+});
+
+function checkLoginState() {
+    const isLogged = localStorage.getItem('isLoggedIn');
+    if (isLogged === 'true') {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-screen').classList.remove('hidden');
+        updateUI();
+    } else {
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('app-screen').classList.add('hidden');
+    }
+}
+
+function logout() {
+    localStorage.removeItem('isLoggedIn');
+    checkLoginState();
+}
+
+// Navigasi Tab Sidebar
+function switchTab(tabId, element) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+
+    document.getElementById(tabId).classList.add('active');
+    element.classList.add('active');
+}
+
+// Format & UI Rendering
 function formatRupiah(angka) {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(angka);
 }
 
-// Fungsi update tampilan UI
 function updateUI() {
+    const listTransaksi = document.getElementById('list-transaksi');
     listTransaksi.innerHTML = '';
-    let totalMasuk = 0;
-    let totalKeluar = 0;
+    let totalMasuk = 0, totalKeluar = 0;
 
     transaksi.forEach((trx, index) => {
-        if (trx.jenis === 'masuk') {
-            totalMasuk += trx.jumlah;
-        } else {
-            totalKeluar += trx.jumlah;
-        }
+        if (trx.jenis === 'masuk') totalMasuk += trx.jumlah;
+        else totalKeluar += trx.jumlah;
 
         const li = document.createElement('li');
-        li.classList.add('item-transaksi');
-        li.classList.add(trx.jenis === 'masuk' ? 'border-masuk' : 'border-keluar');
-        
+        li.classList.add('item-transaksi', trx.jenis === 'masuk' ? 'border-masuk' : 'border-keluar');
         li.innerHTML = `
             <div>
                 <strong>${trx.keterangan}</strong> <br>
@@ -49,38 +74,31 @@ function updateUI() {
         listTransaksi.appendChild(li);
     });
 
-    const totalSaldo = totalMasuk - totalKeluar;
-    document.getElementById('total-saldo').innerText = formatRupiah(totalSaldo);
+    document.getElementById('total-saldo').innerText = formatRupiah(totalMasuk - totalKeluar);
     document.getElementById('total-masuk').innerText = formatRupiah(totalMasuk);
     document.getElementById('total-keluar').innerText = formatRupiah(totalKeluar);
 }
 
-// Fungsi Tarik Data dari Gmail (Google Apps Script)
+// Fitur Sinkronisasi Gmail API
 async function sinkronisasiGmail() {
     const btnSync = document.getElementById('btn-sync');
-    
-    if (URL_API_GAS === "ISI_LINK_WEB_APP_GAS_DI_SINI_NANTI") {
-        alert("Sabar bre! Kita harus selesain settingan Google Apps Script dulu buat dapet link API-nya.");
-        return;
-    }
-
     btnSync.innerText = "⏳ Sedang menarik data...";
     btnSync.disabled = true;
 
     try {
-        const response = await fetch(URL_API_GAS);
+        const response = await fetch(URL_API_GAS, { method: 'GET', redirect: 'follow' });
         const dataBaru = await response.json();
 
-        if (dataBaru.length > 0) {
+        if (Array.isArray(dataBaru) && dataBaru.length > 0) {
             transaksi = [...dataBaru, ...transaksi];
             localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
             updateUI();
-            alert(`Berhasil menarik ${dataBaru.length} transaksi baru dari email BRI!`);
+            alert(`Berhasil menarik ${dataBaru.length} transaksi dari BRI!`);
         } else {
-            alert("Tidak ada transaksi baru di email hari ini.");
+            alert("Tidak ada transaksi BRI baru.");
         }
     } catch (error) {
-        alert("Gagal menarik data. Pastikan link API benar dan internet stabil.");
+        alert("Gagal menarik data.");
         console.error(error);
     } finally {
         btnSync.innerText = "🔄 Tarik Data Otomatis (Gmail BRI)";
@@ -88,74 +106,56 @@ async function sinkronisasiGmail() {
     }
 }
 
-// Fungsi submit form manual
-form.addEventListener('submit', function(e) {
-    e.preventDefault(); 
-    
-    const dataBaru = {
-        keterangan: inputKeterangan.value,
-        jumlah: parseInt(inputJumlah.value),
-        jenis: inputJenis.value,
-        sumber: inputSumber.value,
+// Input & Hapus Manual
+document.getElementById('form-transaksi').addEventListener('submit', function(e) {
+    e.preventDefault();
+    transaksi.push({
+        keterangan: document.getElementById('keterangan').value,
+        jumlah: parseInt(document.getElementById('jumlah').value),
+        jenis: document.getElementById('jenis').value,
+        sumber: document.getElementById('sumber').value,
         tanggal: new Date().toLocaleDateString('id-ID')
-    };
-
-    transaksi.push(dataBaru);
+    });
     localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
-
-    inputKeterangan.value = '';
-    inputJumlah.value = '';
-
-    updateUI(); 
+    this.reset();
+    updateUI();
+    alert('Transaksi berhasil disimpan!');
 });
 
-// Fungsi hapus transaksi
 function hapusTransaksi(index) {
-    transaksi.splice(index, 1); 
-    localStorage.setItem('dataTransaksi', JSON.stringify(transaksi)); 
-    updateUI(); 
+    transaksi.splice(index, 1);
+    localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
+    updateUI();
 }
 
-// Fitur Import CSV
+// Import CSV
 function prosesCSV() {
-    const fileInput = document.getElementById('file-csv');
-    const file = fileInput.files[0];
-    
-    if (!file) {
-        alert('Pilih file CSV dulu, bre!');
-        return;
-    }
+    const file = document.getElementById('file-csv').files[0];
+    if (!file) return alert('Pilih file CSV dulu, bre!');
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        const text = e.target.result;
-        const baris = text.split('\n');
-        let jumlahDitambahkan = 0;
-
+        const baris = e.target.result.split('\n');
+        let count = 0;
         baris.forEach(row => {
-            const kolom = row.split(',');
-            if (kolom.length >= 4) {
-                const dataBaru = {
-                    keterangan: kolom[0].trim(),
-                    jumlah: parseInt(kolom[1].trim()),
-                    jenis: kolom[2].trim().toLowerCase(),
-                    sumber: kolom[3].trim(),
+            const k = row.split(',');
+            if (k.length >= 4 && !isNaN(parseInt(k[1]))) {
+                transaksi.push({
+                    keterangan: k[0].trim(),
+                    jumlah: parseInt(k[1].trim()),
+                    jenis: k[2].trim().toLowerCase(),
+                    sumber: k[3].trim(),
                     tanggal: new Date().toLocaleDateString('id-ID')
-                };
-                if (!isNaN(dataBaru.jumlah)) {
-                    transaksi.push(dataBaru);
-                    jumlahDitambahkan++;
-                }
+                });
+                count++;
             }
         });
-
         localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
         updateUI();
-        alert(`Mantap! ${jumlahDitambahkan} transaksi berhasil di-import.`);
-        fileInput.value = ""; 
+        alert(`Mantap! ${count} data berhasil di-import.`);
     };
     reader.readAsText(file);
 }
 
-// Jalankan pertama kali saat web dibuka
-updateUI();
+// Inisialisasi Aplikasi
+checkLoginState();
