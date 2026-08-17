@@ -1,5 +1,5 @@
-// GANTI DENGAN URL APPS SCRIPT WE BAPP KAMU
-const GAS_URL = "URL_WEB_APP_APPS_SCRIPT_KAMU_DI_SINI";
+// URL Web App GAS Kamu
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxiKAmbyy46MbzVwSYkDtXPofa8TYOJlKaG8_MRESjxxI2Zb-v1uaLCMKvc4upfC7vArg/exec";
 
 let listTransaksi = [];
 
@@ -11,14 +11,25 @@ async function fetchGmailData() {
   btn.disabled = true;
 
   try {
-    const response = await fetch(GAS_URL);
+    // Gunakan method GET dengan mode cors & redirect follow
+    const response = await fetch(GAS_URL, {
+      method: "GET",
+      mode: "cors",
+      redirect: "follow"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
-    
+    console.log("Data berhasil ditarik:", data);
+
     listTransaksi = data;
     updateUI();
   } catch (err) {
-    alert("Gagal mengambil data dari Gmail!");
-    console.error(err);
+    alert("Gagal mengambil data dari Gmail! Tekan F12 -> Cek tab Console untuk detail error.");
+    console.error("Detail Error Tarik Data:", err);
   } finally {
     btn.innerText = "🔄 Tarik Data Otomatis (Gmail)";
     btn.disabled = false;
@@ -29,7 +40,13 @@ function updateUI() {
   let totalMasuk = 0;
   let totalKeluar = 0;
   const listContainer = document.getElementById("riwayatList");
+  
+  if (!listContainer) return;
   listContainer.innerHTML = "";
+
+  if (listTransaksi.length === 0) {
+    listContainer.innerHTML = "<p style='text-align:center; color:#64748b;'>Belum ada transaksi ditemukan.</p>";
+  }
 
   listTransaksi.forEach(tx => {
     if (tx.jenis === "masuk") {
@@ -38,7 +55,6 @@ function updateUI() {
       totalKeluar += tx.jumlah;
     }
 
-    // Render baris riwayat
     const item = document.createElement("div");
     item.className = `tx-item ${tx.jenis}`;
     item.innerHTML = `
