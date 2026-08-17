@@ -64,20 +64,20 @@
             margin-top: auto;
         }
 
-        /* Main Area (Center Alignment Fix) */
+        /* Main Area (Center Alignment) */
         .main-content {
             flex: 1;
             padding: 30px 20px;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Meratakan semua konten ke tengah */
+            align-items: center;
             width: 100%;
         }
 
         .tab-content { 
             display: none; 
             width: 100%;
-            max-width: 600px; /* Batas lebar konten biar simetris di tengah */
+            max-width: 600px;
         }
         .tab-content.active { display: block; }
 
@@ -147,7 +147,7 @@
         .badge { font-size: 11px; background: #e5e7eb; padding: 4px 8px; border-radius: 12px; }
         .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; width: auto; font-size: 12px; margin-top: 4px; }
 
-        /* CSS KHUSUS TAMPILAN HP (MOBILE RESPONSIVE) */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .app-layout {
                 flex-direction: column;
@@ -215,7 +215,6 @@
 
     <!-- UTAMA (DASHBOARD) -->
     <div id="app-screen" class="app-layout hidden">
-        <!-- Sidebar Menu (Desktop: Kiri, Mobile: Atas) -->
         <aside class="sidebar">
             <h2 class="sidebar-brand">DompetKu 💰</h2>
             <button class="btn-logout" onclick="logout()">Logout 🚪</button>
@@ -227,7 +226,6 @@
             </ul>
         </aside>
 
-        <!-- Konten Utama (Posisi Rata Tengah) -->
         <main class="main-content">
             
             <!-- MENU 1: DASHBOARD -->
@@ -390,7 +388,7 @@
             document.getElementById('total-keluar').innerText = formatRupiah(totalKeluar);
         }
 
-        // Fetch Data Gmail API
+        // Fetch Data Gmail API (DENGAN CEK DUPLIKASI DATA)
         async function sinkronisasiGmail() {
             const btnSync = document.getElementById('btn-sync');
             btnSync.innerText = "⏳ Sedang menarik data...";
@@ -401,15 +399,34 @@
                 const dataBaru = await response.json();
 
                 if (Array.isArray(dataBaru) && dataBaru.length > 0) {
-                    transaksi = [...dataBaru, ...transaksi];
-                    localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
-                    updateUI();
-                    alert(`Berhasil menarik ${dataBaru.length} transaksi dari BRI!`);
+                    let jumlahDataBaru = 0;
+
+                    dataBaru.forEach(itemBaru => {
+                        // Cek apakah data sudah pernah disimpan (kombinasi tanggal + keterangan + jumlah)
+                        const sudahAda = transaksi.some(itemLama => 
+                            itemLama.tanggal === itemBaru.tanggal &&
+                            itemLama.keterangan === itemBaru.keterangan &&
+                            itemLama.jumlah === itemBaru.jumlah
+                        );
+
+                        if (!sudahAda) {
+                            transaksi.unshift(itemBaru);
+                            jumlahDataBaru++;
+                        }
+                    });
+
+                    if (jumlahDataBaru > 0) {
+                        localStorage.setItem('dataTransaksi', JSON.stringify(transaksi));
+                        updateUI();
+                        alert(`Berhasil menambahkan ${jumlahDataBaru} transaksi baru dari BRI!`);
+                    } else {
+                        alert("Semua transaksi BRI terbaru sudah tersimpan sebelumnya (tidak ada data ganda).");
+                    }
                 } else {
-                    alert("Tidak ada transaksi BRI baru.");
+                    alert("Tidak ada transaksi BRI baru ditemukan.");
                 }
             } catch (error) {
-                alert("Gagal menarik data.");
+                alert("Gagal menarik data dari server.");
                 console.error(error);
             } finally {
                 btnSync.innerText = "🔄 Tarik Data Otomatis (Gmail BRI)";
@@ -420,7 +437,7 @@
         // Form Submit Manual
         document.getElementById('form-transaksi').addEventListener('submit', function(e) {
             e.preventDefault();
-            transaksi.push({
+            transaksi.unshift({
                 keterangan: document.getElementById('keterangan').value,
                 jumlah: parseInt(document.getElementById('jumlah').value),
                 jenis: document.getElementById('jenis').value,
@@ -451,7 +468,7 @@
                 baris.forEach(row => {
                     const k = row.split(',');
                     if (k.length >= 4 && !isNaN(parseInt(k[1]))) {
-                        transaksi.push({
+                        transaksi.unshift({
                             keterangan: k[0].trim(),
                             jumlah: parseInt(k[1].trim()),
                             jenis: k[2].trim().toLowerCase(),
